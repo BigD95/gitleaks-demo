@@ -1,4 +1,4 @@
-name: GitLeaks Secret Scan
+name: Security Checks (SAST + Secrets)
 
 on:
   push:
@@ -7,10 +7,25 @@ on:
     branches: [main]
 
 jobs:
-  gitleaks:
+  semgrep:
+    name: Static Code Analysis (SAST)
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Semgrep
+        uses: returntocorp/semgrep-action@v1
+        with:
+          config: >-
+            p/ci
+            p/python
+
+  gitleaks:
+    name: Secret Detection (GitLeaks)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Run GitLeaks
